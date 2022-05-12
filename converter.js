@@ -20,17 +20,17 @@ function convert(from, value, res) {
     if (from == 'kelvin') {
         const celcius = value - data['kelvin'].addition
         for (const item in result) {
-            result[item] = (data[item].constant / data['celcius'].constant * celcius).toPrecision(3)
+            result[item] = (data[item].constant / data['celcius'].constant * celcius).toFixed(1)
         }
     }
 
     else {
         for (const item in result) {
             if (item == 'kelvin') {
-                result[item] = ((data['celcius'].constant / data[from].constant * value) + data['kelvin'].addition).toPrecision(3)
+                result[item] = ((data['celcius'].constant / data[from].constant * value) + data['kelvin'].addition).toFixed(1)
             }
             else {
-                result[item] = (data[item].constant / data[from].constant * value).toPrecision(3)
+                result[item] = (data[item].constant / data[from].constant * value).toFixed(1)
             }
         }
     }
