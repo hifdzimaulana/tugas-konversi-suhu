@@ -1,59 +1,46 @@
-const Converter = {
-
-    fromCelcius(c, res) {
-        var result = {
-            "celcius": c,
-            "result": {
-                "reamur": 4 / 5 * c,
-                "fahrenheit": 9 / 5 * c,
-                "kelvin": c + 273
-            }
-        }
-
-        res.send(result)
-        return true;
+const data = {
+    "celcius": {
+        constant: 5
     },
-
-    fromReamur(r, res) {
-        var result = {
-            "reamur": r,
-            "result": {
-                "celcius": 5 / 4 * r,
-                "fahrenheit": 9 / 4 * r,
-                "kelvin": 5 / 4 * r + 273
-            }
-        }
-
-        res.send(result)
-        return true;
+    "reamur": {
+        constant: 4
     },
-
-    fromFahrenheit(f, res) {
-        var result = {
-            "fahrenheit": f,
-            "result": {
-                "celcius": 5 / 9 * f,
-                "reamur": 4 / 9 * f,
-                "kelvin": 5 / 9 * f + 273
-            }
-        }
-
-        res.send(result)
-        return true
+    "fahrenheit": {
+        constant: 9
     },
-
-    fromKelvin(k, res) {
-        var result = {
-            "kelvin": k,
-            "result": {
-                "celcius": k - 273,
-                "reamur": (k - 273) * 4 / 5,
-                "fahrenheit": (k - 273) * 9 / 5
-            }
-        }
-
-        res.send(result)
-        return true
+    "kelvin": {
+        addition: 273
     }
 }
-module.exports = Converter
+
+function convert(from, value, res) {
+    let result = { ...data }
+    delete result[from]
+
+    if (from == 'kelvin') {
+        const celcius = value - data['kelvin'].addition
+        for (const item in result) {
+            result[item] = (data[item].constant / data['celcius'].constant * celcius).toPrecision(3)
+        }
+    }
+
+    else {
+        for (const item in result) {
+            if (item == 'kelvin') {
+                result[item] = ((data['celcius'].constant / data[from].constant * value) + data['kelvin'].addition).toPrecision(3)
+            }
+            else {
+                result[item] = (data[item].constant / data[from].constant * value).toPrecision(3)
+            }
+        }
+    }
+
+    result = {
+        [from]: value,
+        result
+    }
+    res.send(result)
+    return true
+}
+
+module.exports = convert

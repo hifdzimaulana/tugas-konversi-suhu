@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const Converter = require('./converter')
+const convert = require('./converter')
 
 const app = express()
 
@@ -13,26 +13,17 @@ app.get("/convert/:satuan/:suhu", (req, res) => {
     var satuan = req.params.satuan
     var suhu = Number(req.params.suhu)
 
-    switch (satuan) {
-        case 'celcius':
-            Converter.fromCelcius(suhu, res)
-            break;
-        case 'reamur':
-            Converter.fromReamur(suhu, res)
-            break;
-        case 'fahrenheit':
-            Converter.fromFahrenheit(suhu, res)
-            break;
-        case 'kelvin':
-            Converter.fromKelvin(suhu, res)
-            break;
-        default:
+    try {
+        convert(satuan, suhu, res)
+    } catch (error) {
+        if (error.name == 'TypeError') {
             res.status(404)
             res.send({
-                "message": `Couldn't find route ${req.url}`
+                message: `Couldn't find route ${req.url}`
             })
-            break;
+        }
     }
+
 })
 
 const PORT = 1337
